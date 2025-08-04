@@ -3,12 +3,25 @@ import Papa from 'papaparse';
 const UploadCsv = ({ onDataLoaded }) => {
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
+    if (!file) return;
+
+    if (!file.name.endsWith('.csv')) {
+      alert('Please upload a valid CSV file.');
+      return;
+    }
 
     Papa.parse(file, {
       header: true,
       skipEmptyLines: true,
       complete: function (results) {
+        if (!results.data || results.data.length === 0) {
+          alert('CSV file is empty or invalid.');
+          return;
+        }
         onDataLoaded(results.data);
+      },
+      error: function (error) {
+        alert(`Error parsing CSV: ${error.message}`);
       },
     });
   };

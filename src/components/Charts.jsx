@@ -1,14 +1,16 @@
 import { useMemo } from 'react';
 import { LineChart, Line, XAxis, YAxis, Tooltip, Legend, CartesianGrid, ResponsiveContainer } from 'recharts';
 
-const Charts = ({ data, selectedExperiments }) => {
+const Charts = ({ data, selectedExperiments, selectedMetric }) => {
   const filteredData = useMemo(() => {
     return data.filter((d) => selectedExperiments.includes(d.experiment_id));
   }, [data, selectedExperiments]);
 
   const metrics = useMemo(() => {
-    return [...new Set(filteredData.map((d) => d.metric_name))];
-  }, [filteredData]);
+    const allMetrics = filteredData.map((d) => d.metric_name);
+    const unique = [...new Set(allMetrics)];
+    return selectedMetric ? unique.filter((m) => m === selectedMetric) : unique;
+  }, [filteredData, selectedMetric]);
 
   const colors = ['#8884d8', '#82ca9d', '#ffc658', '#ff7300', '#0088fe'];
 

@@ -5,12 +5,16 @@ import Charts from './components/Charts.jsx';
 function App() {
   const [records, setRecords] = useState([]);
   const [selectedExperiments, setSelectedExperiments] = useState([]);
+  const [selectedMetric, setSelectedMetric] = useState('');
 
   const handleDataLoaded = (data) => {
     setRecords(data);
+    setSelectedExperiments([]);
+    setSelectedMetric('');
   };
 
   const uniqueExperiments = [...new Set(records.map((r) => r.experiment_id))];
+  const uniqueMetrics = [...new Set(records.map((r) => r.metric_name))];
 
   const toggleExperiment = (experimentID) => {
     setSelectedExperiments((prev) =>
@@ -46,6 +50,20 @@ function App() {
               ))}
             </div>
 
+            <h3 className='text-lg font-medium text-gray-600 mt-4 mb-2'>Filter by metric:</h3>
+            <select
+              className='border border-gray-300 rounded-md p-2 mb-4'
+              value={selectedMetric}
+              onChange={(e) => setSelectedMetric(e.target.value)}
+            >
+              <option value=''>All metrics</option>
+              {uniqueMetrics.map((metric) => (
+                <option key={metric} value={metric}>
+                  {metric}
+                </option>
+              ))}
+            </select>
+
             <h3 className='text-lg font-medium text-gray-600 mt-4'>
               Selected experiments:
               <span className='font-semibold text-indigo-600 ml-2'>
@@ -54,7 +72,10 @@ function App() {
             </h3>
           </div>
         )}
-        {selectedExperiments.length > 0 && <Charts data={records} selectedExperiments={selectedExperiments} />}
+
+        {selectedExperiments.length > 0 && (
+          <Charts data={records} selectedExperiments={selectedExperiments} selectedMetric={selectedMetric} />
+        )}
       </div>
     </div>
   );
